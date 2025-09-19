@@ -30,7 +30,9 @@ cd <repository_name>
 
 You need to set up your Scaleway API keys to allow Terraform to manage resources in your account. The most secure way is to set them as environment variables on your computer.
 
-Your **API Access Key** and **Secret Key** can be found in your Scaleway console under **Project** \> **Credentials**.
+Your **API Access Key** and **Secret Key** can be found in your Scaleway console under **IAM** \> **Users or Application ** \> API Key.
+
+This **API Access Key** need to have right permission to launch this deployment (OrganizationManager, VPCFullAccess, VPCGatewayFullAccess, LoadBalancersFullAccess, ElasticMetalFullAccess, ObjectStorageFullAccess)
 
 ```sh
 export SCW_ACCESS_KEY="SCWxxxxxxxxxxxxxxxxxxxx"
