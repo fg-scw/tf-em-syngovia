@@ -1,118 +1,101 @@
-nfrastructure Terraform pour Medinplus sur Scaleway
-Ce projet Terraform déploie une infrastructure complète sur Scaleway. Il a pour but de mettre en place un environnement sécurisé et fonctionnel comprenant un VPC, un serveur Bare Metal, un Load Balancer, un bucket S3 et les politiques IAM nécessaires.
+# Terraform Medinplus Project
 
-Prérequis
-Avant de commencer, assurez-vous d'avoir les éléments suivants :
+This repository contains the Terraform configuration files for deploying the Medinplus infrastructure on Scaleway.
 
-Terraform : Version 1.5.0 ou supérieure installée sur votre machine.
+-----
 
-Compte Scaleway : Un compte Scaleway actif.
+## 🚀 Getting Started
 
-Clés d'API Scaleway : Votre access_key et secret_key IAM. Celles-ci sont essentielles pour que Terraform puisse s'authentifier auprès de l'API Scaleway.
+### Prerequisites
 
-Configuration
-Suivez ces étapes pour configurer et déployer l'infrastructure.
+Before you begin, ensure you have the following installed on your machine:
 
-1. Clés d'API Scaleway (Secret)
-Pour des raisons de sécurité, vos clés d'API ne doivent jamais être écrites directement dans les fichiers de configuration. La méthode recommandée est d'utiliser des variables d'environnement.
+  * **[Terraform](https://www.terraform.io/downloads.html)**: The infrastructure as code tool.
+  * **[Scaleway CLI](https://www.google.com/search?q=https://www.scaleway.com/en/docs/identity-and-access-management/iam/how-to/install-scaleway-cli/)**: Necessary for authentication.
 
-Méthode Recommandée : Variables d'Environnement
-Le provider Scaleway pour Terraform recherche automatiquement ces variables. Vous n'aurez rien d'autre à configurer si vous utilisez cette méthode.
+-----
 
-Sur Linux ou macOS :
+### Step 1: Clone the Repository
 
-Bash
+Clone this Git repository to your local machine.
 
-export SCW_ACCESS_KEY="VOTRE_ACCESS_KEY"
-export SCW_SECRET_KEY="VOTRE_SECRET_KEY"
-Sur Windows (PowerShell) :
+```sh
+git clone <repository_url>
+cd <repository_name>
+```
 
-PowerShell
+-----
 
-$env:SCW_ACCESS_KEY="VOTRE_ACCESS_KEY"
-$env:SCW_SECRET_KEY="VOTRE_SECRET_KEY"
-Vous pouvez également définir la variable SCW_DEFAULT_PROJECT_ID pour cibler votre projet par défaut, bien que celui-ci soit déjà défini dans le fichier terraform.tfvars.
+### Step 2: Configure Scaleway Credentials
 
-⚠️ Méthode Alternative (Non Recommandée)
-Si vous ne pouvez pas utiliser les variables d'environnement, vous pouvez ajouter vos clés au fichier terraform.tfvars. Si vous faites cela, assurez-vous que ce fichier est inclus dans votre .gitignore pour ne jamais l'envoyer sur un dépôt de code !
+You need to set up your Scaleway API keys to allow Terraform to manage resources in your account. The most secure way is to set them as environment variables on your computer.
 
-Terraform
+Your **API Access Key** and **Secret Key** can be found in your Scaleway console under **Project** \> **Credentials**.
 
-# terraform.tfvars
+```sh
+export SCW_ACCESS_KEY="SCWxxxxxxxxxxxxxxxxxxxx"
+export SCW_SECRET_KEY="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+```
 
-scw_access_key = "VOTRE_ACCESS_KEY"
-scw_secret_key = "VOTRE_SECRET_KEY"
-2. Personnaliser le fichier terraform.tfvars
-Vous devez compléter le fichier terraform.tfvars avec les informations spécifiques à votre projet.
+*Note: Replace the placeholder values with your actual keys.*
 
-Ouvrez le fichier terraform.tfvars et remplissez les variables suivantes :
+-----
 
+### Step 3: Configure Project Variables
 
-scw_project_id: L'ID de votre projet Scaleway.
+Open the `terraform.tfvars` file and fill in the required values. These variables are specific to your project and environment.
 
+  * [cite\_start]`scw_project_id`: Your Scaleway Project ID[cite: 1].
+  * [cite\_start]`scw_organization_id`: Your Scaleway Organization ID[cite: 1].
+  * [cite\_start]`authorized_ip`: Your public IP address to allow SSH and Load Balancer access[cite: 1]. You can find it by searching "What's my IP" on Google.
+  * [cite\_start]`baremetal_offer_name`: The name of the Elastic Metal server offer you want to deploy[cite: 3].
+  * [cite\_start]`bucket_name`: The name for your S3 bucket[cite: 1].
+  * [cite\_start]`terraform_user_email`: The email of the IAM user running Terraform[cite: 4].
 
-scw_organization_id: L'ID de votre organisation Scaleway.
+-----
 
-authorized_ip: Votre adresse IP publique. C'est crucial pour autoriser l'accès au bastion SSH et au Load Balancer.
+### Step 4: Initialize and Apply Terraform
 
+Navigate to the project directory in your terminal and run the following commands to initialize Terraform, review the plan, and apply the changes.
 
-rdp_target_private_ip: L'adresse IP privée de la VM Windows à laquelle vous souhaitez accéder via RDP.
+1.  **Initialize Terraform:**
+    This command downloads the necessary Scaleway provider.
 
+    ```sh
+    terraform init
+    ```
 
-baremetal_offer_name: Le nom commercial de l'offre de serveur Bare Metal que vous souhaitez (ex: "EM-T220E-L40S").
+2.  **Plan the Deployment:**
+    This command shows you what resources Terraform will create, update, or destroy. Always review this output before applying.
 
-terraform_user_email: L'adresse e-mail de l'utilisateur IAM qui exécute Terraform. Cela est utilisé pour garantir que le créateur du bucket S3 en conserve l'accès complet.
+    ```sh
+    terraform plan
+    ```
 
+3.  **Apply the Changes:**
+    This command creates the infrastructure on Scaleway. You will be prompted to confirm by typing `yes`.
 
-Déploiement
-Une fois la configuration terminée, suivez les étapes de déploiement standards de Terraform.
+    ```sh
+    terraform apply
+    ```
 
-Initialisation
-Lancez cette commande pour télécharger les dépendances nécessaires, notamment le provider Scaleway.
+-----
 
-Bash
+## 💡 Outputs
 
-terraform init
-Planification
-Cette commande vous montre un aperçu de toutes les ressources qui seront créées. C'est une étape de vérification importante.
+After a successful `terraform apply`, Terraform will output key information about your newly created infrastructure, such as:
 
-Bash
+  * [cite\_start]`public_gateway_ip`: The public IP of the gateway for NAT[cite: 27].
+  * [cite\_start]`load_balancer_ip`: The public IP of the load balancer[cite: 28].
+  * [cite\_start]`s3_bucket_endpoint`: The endpoint for your S3 bucket[cite: 29].
+  * [cite\_start]`application_api_access_key` and `application_api_secret_key`: API keys for the IAM application[cite: 30, 31].
 
-terraform plan
-Application
-Si le plan vous convient, appliquez-le pour créer réellement les ressources sur Scaleway.
+-----
 
-Bash
+## 🗑️ Cleanup
 
-terraform apply
-Terraform vous demandera une confirmation. Tapez yes et validez.
+To destroy all the resources created by this configuration, run the following command. **Use with caution**, as this action is irreversible.
 
-Après le Déploiement
-Une fois l'exécution de terraform apply terminée, les sorties (outputs) définies dans le fichier outputs.tf seront affichées à l'écran. Vous y trouverez des informations importantes comme :
-
-L'ID du VPC (
-
-vpc_id) 
-
-L'adresse IP publique de la passerelle (
-
-public_gateway_ip) 
-
-L'adresse IP publique du Load Balancer (
-
-load_balancer_ip) 
-
-L'endpoint du bucket S3 (
-
-s3_bucket_endpoint) 
-
-Les clés d'accès (
-
-application_api_access_key et application_api_secret_key) pour l'application IAM qui a été créée.
-
-Nettoyage
-Pour supprimer toutes les ressources créées par ce projet et éviter des coûts inutiles, utilisez la commande suivante :
-
-Bash
-
+```sh
 terraform destroy
+```
