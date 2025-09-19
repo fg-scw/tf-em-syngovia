@@ -1,5 +1,3 @@
-Je comprends. Voici un guide détaillé pour renommer une interface réseau sur Proxmox 9, au format Markdown en un seul bloc.
-
 -----
 
 ### **Configuration Proxmox 9 : Renommage d'interface réseau**
