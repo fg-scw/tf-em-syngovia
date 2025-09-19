@@ -11,7 +11,7 @@ This repository contains the Terraform configuration files for deploying the Med
 Before you begin, ensure you have the following installed on your machine:
 
   * **[Terraform](https://www.terraform.io/downloads.html)**: The infrastructure as code tool.
-  * **[Scaleway CLI](https://www.google.com/search?q=https://www.scaleway.com/en/docs/identity-and-access-management/iam/how-to/install-scaleway-cli/)**: Necessary for authentication.
+  * **[Scaleway CLI](https://www.scaleway.com/en/cli/)**: Necessary for authentication.
 
 -----
 
